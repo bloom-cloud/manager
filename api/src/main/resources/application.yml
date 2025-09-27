@@ -19,3 +19,20 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${client-id}
+            client-secret: ${client-secret}
+            scope:
+              - email
+              - profile
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+app:
+  oauth2:
+    redirect-uri: http://localhost:8080/api/auth/oauth2/callback

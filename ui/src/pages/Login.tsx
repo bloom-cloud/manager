@@ -24,6 +24,10 @@ export default function Login() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
     <div className="flex h-screen">
       <form
@@ -77,6 +81,27 @@ export default function Login() {
             Register
           </button>
         </p>
+
+
+    <div className="flex items-center gap-2 mt-2">
+      <hr className="flex-1 border-gray-300" />
+      <span className="text-xs text-gray-500">or</span>
+      <hr className="flex-1 border-gray-300" />
+    </div>
+
+    <button
+      type="button"
+      onClick={handleGoogleLogin}
+      className="border flex items-center justify-center gap-2 rounded bg-white p-2 hover:bg-gray-100 shadow-sm mt-2"
+    >
+      <img
+        src="https://www.svgrepo.com/show/475656/google-color.svg"
+        alt="Google"
+        className="w-5 h-5"
+      />
+      <span>Login with Google</span>
+    </button>
+
       </form>
     </div>
   );
