@@ -1,46 +1,76 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import api from "../api";
 import { useAuth } from "../AuthContext";
-import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const [message, setMessage] = useState("Loading...");
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+  const { token, logout } = useAuth();
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    api
-      .get("/secure/test")
-      .then((res) => {
-        console.log("✅ API success:", res.data);
-        setMessage(res.data);
-      })
-      .catch((err) => {
-        console.error("❌ API error:", err);
-        setMessage("Unauthorized");
-        logout();
-        navigate("/login");
-      });
-  }, [logout, navigate]);
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage("");
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+    try {
+      await api.post(
+        "/user/change-password",
+        { oldPassword, newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMessage("✅ Password changed successfully!");
+      setOldPassword("");
+      setNewPassword("");
+    } catch (err: any) {
+      console.error(err);
+      setMessage("❌ Failed to change password");
+    }
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="m-auto flex flex-col gap-4 border p-6 rounded-md shadow-md w-96">
-        <h2 className="text-xl font-semibold text-center">Dashboard</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-4">Dashboard</h2>
+      <button
+        className="bg-red-500 text-white px-3 py-1 rounded mb-6"
+        onClick={logout}
+      >
+        Logout
+      </button>
 
-        <p className="text-center text-gray-700">{message}</p>
+      <div className="max-w-md border p-4 rounded shadow">
+        <h3 className="text-lg font-semibold mb-2">Change Password</h3>
+        <form onSubmit={handleChangePassword} className="flex flex-col gap-2">
+          <input
+            type="password"
+            placeholder="Old password"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <input
+            type="password"
+            placeholder="New password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+          >
+            Change Password
+          </button>
+        </form>
 
-        <button
-          onClick={handleLogout}
-          className="border rounded bg-red-500 text-white p-2 hover:bg-red-600 mt-2"
-        >
-          Logout
-        </button>
+        {message && (
+          <p
+            className={`mt-2 text-sm ${
+              message.includes("✅") ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );
