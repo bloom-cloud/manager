@@ -6,7 +6,7 @@ spring:
     name: manager
 
   datasource:
-    url: jdbc:mysql://localhost:3306/manager?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/manager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
     password: root
 
@@ -29,10 +29,7 @@ spring:
             scope:
               - email
               - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
         provider:
           google:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-
-app:
-  oauth2:
-    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
